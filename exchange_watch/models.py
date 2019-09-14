@@ -24,7 +24,7 @@ class ExchangeRate(models.Model):
 
     class Meta:
         constraints = (
-            models.UniqueConstraint(fields=('primary', 'secondary'), name='db_exchange_rate_primary_secondary_unique')
+            models.UniqueConstraint(fields=('primary', 'secondary'), name='db_exchange_rate_primary_secondary_unique'),
         )
         index_together = (
             'primary',

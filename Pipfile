@@ -15,6 +15,7 @@ django-service-objects = "*"
 django-split-settings = "*"
 djangorestframework = "*"
 django-filter = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
