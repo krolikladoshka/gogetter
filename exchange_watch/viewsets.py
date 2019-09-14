@@ -12,7 +12,7 @@ class ExchangeRateViewset(viewsets.mixins.ListModelMixin, viewsets.mixins.Create
     serializer_class = ExchangeRateDefaultSerializer
 
     @action(url_path=r'[a-zA-Z]{3}-[a-zA-Z]{3}', url_name='retrieve-exchange', methods=['GET'], detail=False)
-    def retrieve_rate(self, request, primary, secondary, *args, **kwargs):
+    def retrieve_rate(self, request, *args, **kwargs):
         # TODO: resolve problems with action dispatching
-        print(request)
-        return self.list(*args, **kwargs)
+        # print(request)
+        return self.list(request, *args, **kwargs)
