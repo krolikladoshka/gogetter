@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "==2.2.5"
+celery = {extras = ["redis"],version = "*"}
+psycopg2 = "*"
+beautifulsoup4 = "*"
+lxml = "*"
+django-service-objects = "*"
+django-split-settings = "*"
+djangorestframework = "*"
+django-filter = "*"
+
+[requires]
+python_version = "3.7"
