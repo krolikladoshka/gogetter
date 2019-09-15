@@ -9,10 +9,7 @@ verify_ssl = true
 django = "==2.2.5"
 celery = {extras = ["redis"],version = "*"}
 psycopg2 = "*"
-beautifulsoup4 = "*"
 lxml = "*"
-django-service-objects = "*"
-django-split-settings = "*"
 djangorestframework = "*"
 django-filter = "*"
 requests = "*"
