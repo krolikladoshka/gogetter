@@ -79,7 +79,7 @@ DATABASES = {
         'USER': 'postgres',
         # NOTE: in real app: either django-split-settings or .template file without password set
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
+        'HOST': 'postgres' if os.environ.get('BACKEND_ENV') == 'prod' else '127.0.0.1',
         'PORT': 5432,
     }
 }

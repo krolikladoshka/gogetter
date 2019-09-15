@@ -1,16 +1,6 @@
-version: '3'
+version: '2.1'
 
 services:
-  backend:
-    build: .
-    ports:
-      - "8000:8000"
-    links:
-      - redis
-      - postgres
-    restart: unless-stopped
-    depends_on:
-      - postgres
   redis:
     image: "redis:latest"
     ports:
@@ -24,7 +14,22 @@ services:
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'psql_gogetter'
     healthcheck:
-      test: ['CMD', 'pg_isready -U postgres']
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
+  backend:
+    build: .
+    ports:
+      - "8888:8888"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    links:
+      - postgres
+      - redis
+    environment:
+      BACKEND_ENV: 'prod'

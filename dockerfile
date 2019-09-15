@@ -8,6 +8,6 @@ COPY . .
 
 RUN pip install pipenv && pipenv install --system --deploy
 
-EXPOSE 8888
+EXPOSE 8888:8888
 
 CMD ["/bin/bash", "deploy/run.sh"]
