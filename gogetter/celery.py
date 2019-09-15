@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 
 from celery import Celery
 from django.db import transaction
-from lxml.html import HtmlElement
 
 from exchange_watch.models import ExchangeRate
+from exchange_watch.services import ExchangeRateService
 
 logger = logging.getLogger(__name__)
 redis_dsn = 'redis://localhost:6379'
@@ -22,34 +22,22 @@ def setup_periodic_tasks(sender, **kwargs):
 
 @app.task
 def watch_exchange():
-    import requests
-    from io import StringIO
-    from lxml import etree
+    service = ExchangeRateService()
 
     def get_rate(obj: ExchangeRate) -> None:
-        url = 'https://cryptonator.com/rates/convert/?amount=1&primary={primary}&secondary={secondary}&source=liverates'
-        html = requests.get(url.format(primary=obj.primary, secondary=obj.secondary)).text
-        string_io = StringIO(html)
-
-        parser = etree.HTMLParser()
-        parsed = etree.parse(string_io, parser=parser)
-
-        # NOTE: assuming that html markup won't change in 1k years
-        xpath_result: HtmlElement = parsed.xpath("//h2[@class='heading-large']//strong")[0]
-        value = float(xpath_result.text.strip())
-
-        obj.rate = value
+        obj.rate = service.get_exchange_rate(obj.primary, obj.secondary)
 
     # NOTE: select for update here? no need to wrap full logic with transaction
     with transaction.atomic():
         qs = ExchangeRate.objects \
             .filter(last_updated_date_time__lt=(datetime.now() - timedelta(seconds=10))) \
             .all()
-        objs = tuple(qs)
-        # NOTE: not handling neither database timeout nor network throttling/block/timeout errors here
+        objs = tuple(qs)  # haven't done anything special, django orm caches entire qs into memory by default
 
+        # NOTE: not handling neither database timeout nor network throttling/block/timeout errors here
+        # because it requires events/queues to properly stop pool execution if any error occurred
         with ThreadPoolExecutor(max_workers=4) as executor:
-            for obj in qs:
+            for obj in objs:
                 executor.submit(get_rate, obj)
 
         with transaction.atomic():

@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models import fields
 
 
-# Create your models here.
 # NOTE: in real app: probably there should be a model named 'currency' for more validation & information
 class CurrencyField(fields.CharField):
     def __init__(self, **kwargs):
@@ -18,9 +17,9 @@ class ExchangeRate(models.Model):
     primary = CurrencyField()
     secondary = CurrencyField()
 
-    rate = fields.FloatField()
+    rate = fields.FloatField(null=False, blank=False)
 
-    last_update_date_time = fields.DateTimeField(auto_now=True)
+    last_update_date_time = fields.DateTimeField(null=False, blank=False, auto_now=True)
 
     class Meta:
         constraints = (
